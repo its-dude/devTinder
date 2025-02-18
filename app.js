@@ -6,17 +6,15 @@ const app=express();
 
 const  PORT=3000;
 
-app.use('/signup',async(req,res)=>{
+app.use(express.json());
+
+app.post('/signup',async(req,res)=>{
     try{
-        const user=await User.create({
-            firstName:"Abhishek",
-            lastName:"Mishra",
-            emailId:"abhishek@gmail.com",
-            password:"password"
-        })
+        const user=await User.create(req.body);
         res.send("User created !");
     }catch(err){
         console.log("error in creating user : ",err.message);
+        res.status(501).send("failed to create user");
     }
 })
 
