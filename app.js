@@ -1,20 +1,43 @@
 import express from 'express';
 import {connecDB} from './src/config/mongoose_db.js';
-import {User} from './src/models/user.js'
+import {User} from './src/models/user.js';
+import {validation} from './src/utils/validation.js';
+import bcrypt from "bcrypt";
 const app=express();
 
-
-const  PORT=3000;
+ 
+const  PORT=3000; 
 
 app.use(express.json());
 //create user
 app.post('/signup',async(req,res)=>{
     try{
-        const user=await User.create(req.body);
-        res.send("User created !");
-    }catch(err){
-        res.status(501).send("SIGNUP FAILED : "+err.message);
+        //validation
+        validation(req);
+    
+       const {firstName,emailId,password,gender,skills,age}=req.body;
+       const hash = await bcrypt.hash(password, 10); 
+        try{
+            const user=await User.create({firstName,emailId,password:hash,skills,gender,age});
+            res.send("User created !");
+        }catch(err){
+            res.status(501).send("SIGNUP FAILED : "+err.message);
+        }
     }
+    catch(error){
+        res.status(400).send("Error : ",error.message);
+   }
+})
+//login
+app.post('/login',async(req,res)=>{
+    //check password is correct or not
+    const {emailId,password} = req.body;
+    const user=await User.findOne(emailId);
+    if(!user){res.status(400).send("check your email or password")};//if user not found
+    const iscorrect=await bcrypt.compare(password,user.password);//compare  the password 
+    if(!iscorrect){res.status(400).send("check your email or password")};
+    //redirect to some page
+    res.send("login succesfull....");
 })
 
 //find a user
@@ -26,7 +49,7 @@ app.get('/user', async(req,res)=>{
         console.log(err.message);
         res.status(404).send("user doesn't exist");
     }
-})
+}) 
 
 //get all users
 app.get('/feed',async(req,res)=>{
