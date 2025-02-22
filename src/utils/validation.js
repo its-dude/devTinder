@@ -12,8 +12,8 @@ export const validation=(req)=>{
         throw new Error("Password must contain a special character, a capital letter, and a number");
     }
 
-    if (!validator.isEmail(emailId)) {
-        throw new Error("Invalid emailId format");
+    if (emailId===undefined ||  !emailId || !validator.isEmail(emailId)) {
+        throw new Error("Invalid emailId ");
     }
 
     if (gender !== "male" && gender !== "female" && gender !== "others") {

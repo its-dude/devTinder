@@ -1,4 +1,6 @@
 import mongoose from "mongoose"
+import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
 const {Schema}= mongoose;
 import validator from "validator"
 
@@ -15,6 +17,7 @@ const userSchema = new Schema( {
         type:String,
         unique:true,
         trim:true,
+        toLowerCase:true,
         required:true,
         validate:{
             validator:(value)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
@@ -63,5 +66,18 @@ const userSchema = new Schema( {
         maxlength:[200,"Only 200 characters are allowed"]
     }
 },{timestamps:true})
+
+userSchema.methods.getJWT = async function(){
+    const user =this;
+    const token=jwt.sign({id:user._id},"dev@tinder",{expiresIn:'7d'});
+    return token;
+}
+
+userSchema.methods.validatePassword=async function(enteredPassword){
+    const user= this;
+    const hashedPassword = user.password;
+    const isPasswordCorrect=await bcrypt.compare(enteredPassword,hashedPassword)
+    return isPasswordCorrect;
+}
 
 export const User = mongoose.model("User",userSchema);
