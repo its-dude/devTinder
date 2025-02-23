@@ -15,8 +15,9 @@ GET /feed
 connectionRequestRouter
 POST /request/send/ignored/:userid
 POST /request/send/rejeceted/:userid
-POST /request/send/accepted/:userid
-POST /request/send/pending/:userid
+
+POST /request/review/accepted/:userid
+POST /request/review/interested/:userid
 
 
 
