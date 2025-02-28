@@ -12,13 +12,8 @@ GET /user/connections
 GET /user/requests
 GET /feed   
 
-connectionRequestRouter
-POST /request/send/ignored/:userid
-POST /request/send/rejeceted/:userid
-
-POST /request/review/accepted/:userid
-POST /request/review/interested/:userid
-
-
+# connectionRequestRouter
+POST /request/send/:status/:userid
+POST /request/review/:status/:requestId
 
 status : pending accepted ignored rejected

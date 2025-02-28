@@ -5,6 +5,7 @@ const requestRouter = express.Router();
 import { userAuth } from '../middlewares/auth.js';
 import { ConnectionRequestModel } from "../models/connectionRequest.js";
 import { User } from "../models/user.js";
+import { compareSync } from "bcrypt";
 
 requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res, next) => {
     try {
@@ -35,6 +36,35 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res,
         res.json({ "connection": connectionRequest });
     } catch (error) {
         res.status(400).send("Error: " + error.message);
+    }
+})
+
+requestRouter.post('/request/review/:status/:requestId',userAuth,async (req,res)=>{
+    //check user is valid or not 
+    //status is allowed or not 
+    //chek request exists or not
+    //get the request for the logged in user i.e touserid
+
+    try{
+        const status =req.params.status;
+        const loggedInUser=req.user;
+        const requestId=req.params.requestId;
+        const allowedStatus =["accepted","rejected"];
+
+        if(!allowedStatus.includes(status))return res.status(400).send(`${status} is not a valid status`);
+
+        const request =await ConnectionRequestModel.findOne({
+            _id:requestId,
+            toUserId:loggedInUser._id,
+            status:"interested"
+        });
+
+        if(!request)return res.status(404).json({"message":"Request not found"});
+        request.status=status;
+        await request.save();
+        res.json({"requests":request});
+    }catch(error){
+        res.status(400).send("Error : "+error.message);
     }
 })
 
