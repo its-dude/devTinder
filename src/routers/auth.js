@@ -14,8 +14,10 @@ const __dirname = path.dirname(__filename);
 
 //create user
 authRouter.get('/signup',(req,res)=>{
-    res.sendFile(path.join(__dirname,'../public/Html/signup.html'));
+    const user ={};
+    res.render('signup',{user});
 })
+
 authRouter.post('/signup',async(req,res)=>{
     try{
         //validation
@@ -35,8 +37,9 @@ authRouter.post('/signup',async(req,res)=>{
 })
 //login
 authRouter.get('/login',(req,res)=>{
-    try{
-        res.sendFile(path.join(__dirname,"../public/Html/login.html"))
+    try{ 
+    const user ={};
+    res.render('login',{user});
     }catch(error){
         res.status(500).send("Error : "+error.message);
     }
@@ -53,8 +56,7 @@ authRouter.post('/login',async(req,res)=>{
         const token= await user.getJWT();
         //set cookie
         res.cookie("_id",token);
-        //redirect to some page
-        res.status(200).json({"msg":"login succesfull...."});
+        res.redirect("/profile");
     }catch(err){
         res.status(400).send(err.message);
     }

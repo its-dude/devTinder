@@ -56,7 +56,6 @@ userRouter.get('/feed', userAuth, async (req, res) => {
     //check user is login or not
     //get all the uers fillter  user connecctions
     try {
-        console.log(req.query.page,req.query.limit);
         const loggedInUser = req.user;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 1;
@@ -80,7 +79,7 @@ userRouter.get('/feed', userAuth, async (req, res) => {
         }).
         select(USER_SAFE_DATA).
         skip(skip).
-        limit(limit);
+        limit(limit).lean();
         
         res.json(users);
     } catch (error) {

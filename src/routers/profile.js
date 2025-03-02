@@ -14,21 +14,14 @@ const __dirname = path.dirname(__filename);
 profileRouter.get('/profile', userAuth, async (req, res) => {
     try {
         const user = req.user;
+        user.islogin=true;
         // res.send(`Hello ${user.firstName}`);
-        res.sendFile(path.join(__dirname,"../public/Html/profile.html"));
+        res.render('profile',{user});
     } catch (error) {
         res.status(400).send("Error : " + err.message);
     }
 })
-profileRouter.get('/profile/user', userAuth, async (req, res) => {
-    try {
-        const user = req.user;
-        // res.send(`Hello ${user.firstName}`);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(400).send("Error : " + err.message);
-    }
-})
+
 
 profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
     try {

@@ -17,7 +17,7 @@ const userSchema = new Schema( {
         type:String,
         unique:true,
         trim:true,
-        toLowerCase:true,
+        lowercase:true,
         required:true,
         validate:{
             validator:(value)=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),

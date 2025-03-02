@@ -1,0 +1,8 @@
+<div style="display: flex;align-items: center; justify-content: space-between; background-color: #4e5d75; height: 10vh;  margin:0; padding: 0 2vw;">
+    <div>devTinder</div>
+    <% if(user.islogin){ %>
+    <div style="display: flex; gap: 5px; justify-content:space-between; align-items: center;"><h3>Welcome, <%= user.firstName %>!</h3>
+        <img src="<%= user.photoUrl %>" style="height: 6vh; width: 6vh; border-radius: 50%; background: black; object-fit:cover;display: block;">
+</div>
+<% }%>
+</div>
