@@ -1,24 +1,27 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
+import { fileURLToPath } from 'url';
 import {connecDB} from './src/config/mongoose_db.js';
 import {authRouter} from './src/routers/auth.js';
 import { requestRouter } from './src/routers/connectionRequest.js';
 import { profileRouter } from './src/routers/profile.js';
 import { userRouter } from './src/routers/user.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app=express();
 
 const  PORT=3000; 
 
-app.use('/public',express.static('./src/public'));
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({extended:true}));
+app.use(express.static(path.join(__dirname, './src/public/')));
 
-app.use('/user',userRouter);
+app.use('/',userRouter);
 app.use('/',authRouter);
 app.use('/',requestRouter);
 app.use('/',profileRouter);
