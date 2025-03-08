@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>devTinder</title>
+    <style>
+.user-container {
+    width: 200px; /* Adjust width as needed */
+    padding: 20px;
+    background: #1e1f1f; /* Light background */
+    border-radius: 15px; /* Rounded container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    left: 40%;
+}
+
+#photo {
+    width: 100px;
+    height: 100px;
+    border: none;
+    justify-content: center;
+    font-size: 14px;
+    object-fit: cover;
+}
+img{
+    width: 100px;
+    height: 100px;
+    background-color: #ccc; /* Placeholder color */
+    border-radius: 50%; /* Makes it circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold; 
+}
+
+.user-name, .info {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.accept-reject-btn {
+    display: flex;
+    gap: 10px;
+}
+
+.accept-reject-btn button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 10px; /* Slightly rounded buttons */
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.accept-reject-btn button:first-child {
+    background: #4CAF50; /* Green for interested */
+    color: white;
+}
+
+.accept-reject-btn button:last-child {
+    background: #FF5733; /* Red for ignore */
+    color: white;
+}
+
+.accept-reject-btn button:hover {
+    opacity: 0.8;
+}
+
+    </style>
+</head>
+<body style="background-color: rgb(0, 0, 0); margin: 0; padding: 0;padding-top:10vh ; color: white; overflow: hidden;color: white;">
+    <%- include('nav') %>
+   
+     <h1 style="color: wheat;">Feed</h1>
+   <div class="user-container">
+    <div id="photo"><img src="" alt=""></div>
+    <div class="user-name"><span id="firstName"></span> <span id="lastName"></span></div>
+    <div class="info"><span id="age"></span><span id="gender"></span></div>
+    <div class="accept-reject-btn">
+        <button id="interested-btn">interested</button>
+        <button>ignore</button>
+    </div>
+   </div>
+   <script src="/scripts/feed.js"></script>
+</body>
+</html>

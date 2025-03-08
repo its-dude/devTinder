@@ -65,7 +65,9 @@ authRouter.post('/login',async(req,res)=>{
 authRouter.post('/logout',async(req,res)=>{
     try{
         res.clearCookie('_id');
-        res.send("succesfully logged out");
+        console.log("request came for logout");
+        const user={};
+        return res.render('login',{user});
     }catch(error){
         res.status(400).send("Error : "+error.message);
     }

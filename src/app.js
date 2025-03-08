@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import methodOverride from 'method-override'
 
 import { fileURLToPath } from 'url';
 import {connecDB} from './config/mongoose_db.js';
@@ -20,8 +21,9 @@ app.set("view engine",'ejs');
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended:true}));
-app.use(express.static(path.join(__dirname, './src/public/')));
+app.use(express.static(path.join(__dirname, '../public/')));
 
 app.use('/',userRouter);
 app.use('/',authRouter);
@@ -44,7 +46,7 @@ connecDB()
     console.log("database connection established...");
     //now if success you can listen to users
     app.listen(PORT,()=>{
-        console.log("Server is listening on port 3000...");
+        console.log(`Server is listening on port ${PORT}...`);
     })
 })
 .catch(err=>{

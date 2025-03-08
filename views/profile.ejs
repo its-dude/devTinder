@@ -3,15 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJS Example</title>
+    <title>Sign Up | devTinder</title>
     <style>
-        body{
-            box-sizing: border-box;
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 40vw;
+            color: black;
+            position: absolute;
+            top:12vh;
+            left:30vw;
+            text-align: center;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .login-link {
+            margin-top: 10px;
+        }
+        .login-link a {
+            color: #28a745;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
-<body style="background-color: rgb(0, 0, 0);margin: 0;padding: 0; color: white;overflow:hidden ;">
+<body style="background-color: rgb(0, 0, 0); margin: 0; padding: 0; color: white; overflow-x: hidden;">
     <%- include('nav') %>
+    <div class="container" style="position: absolute;top: 15vh;">
+        <h2>Edit Profile</h2>
+        <form action="/profile/edit?_method=PATCH" method="POST">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" value="<%=user.firstName%>">
 
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="<%=user.lastName%>">
+            
+            <label for="gender">Gender:</label>
+            <input type="text" name="gender" value="<%=user.gender%>">
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" value="<%=user.age%>">
+
+            <label for="photoUrl">Photo URL:</label>
+            <input type="url" id="photoUrl" name="photoUrl" placeholder="https://example.com/photo.jpg" value="<%=user.photoUrl%>">
+
+            <button type="submit">Save</button>
+        </form>
+
+        <div class="login-link">
+            <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
+    </div>
 </body>
 </html>

@@ -5,7 +5,7 @@ import { userAuth } from "../middlewares/auth.js";
 import { ConnectionRequestModel } from "../models/connectionRequest.js";
 import { User } from "../models/user.js";
 
-const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender";
+const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender ";
 
 userRouter.get('/requests/received', userAuth, async (req, res) => {
     //check the user is logged in or not
@@ -52,7 +52,7 @@ userRouter.get('/connections', userAuth, async (req, res) => {
     }
 })
 
-userRouter.get('/feed', userAuth, async (req, res) => {
+userRouter.get('/user/feed', userAuth, async (req, res) => {
     //check user is login or not
     //get all the uers fillter  user connecctions
     try {
@@ -80,11 +80,21 @@ userRouter.get('/feed', userAuth, async (req, res) => {
         select(USER_SAFE_DATA).
         skip(skip).
         limit(limit).lean();
-        
+
         res.json(users);
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
 })
 
+userRouter.get('/feed',userAuth,async (req,res)=>{
+    try{
+        let user=req.user;
+        user.islogin=true;
+        
+        res.render('feed',{user});
+    }catch(err){
+        res.send("error: "+err.message);
+    }
+})
 export { userRouter };
