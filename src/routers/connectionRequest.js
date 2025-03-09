@@ -29,10 +29,11 @@ requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res,
                 { fromUserId: toUserId, toUserId: fromUserId }
             ]
         })
+        console.log(`isrequestexit: ${isRequestExists}`);
         if (isRequestExists) throw new Error("request already exists");
         //create a connection request of the given status
         const connectionRequest = new ConnectionRequestModel({ toUserId, fromUserId, status });
-        await connectionRequest.save()
+        await connectionRequest.save();
         res.json({ "connection": connectionRequest });
     } catch (error) {
         res.status(400).send("Error: " + error.message);

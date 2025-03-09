@@ -5,7 +5,7 @@ import { userAuth } from "../middlewares/auth.js";
 import { ConnectionRequestModel } from "../models/connectionRequest.js";
 import { User } from "../models/user.js";
 
-const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender ";
+const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender _id";
 
 userRouter.get('/requests/received', userAuth, async (req, res) => {
     //check the user is logged in or not
@@ -78,9 +78,9 @@ userRouter.get('/user/feed', userAuth, async (req, res) => {
             $and:[{_id:{$nin:[...hideUsers]}} ,{_id:{$ne:loggedInUser._id}}],
         }).
         select(USER_SAFE_DATA).
+        sort({_id:1}).
         skip(skip).
-        limit(limit).lean();
-
+        limit(limit).lean();        
         res.json(users);
     } catch (error) {
         res.status(400).json({msg: error.message});

@@ -56,7 +56,7 @@ authRouter.post('/login',async(req,res)=>{
         const token= await user.getJWT();
         //set cookie
         res.cookie("_id",token);
-        res.redirect("/profile");
+        res.redirect("/feed");
     }catch(err){
         res.status(400).send(err.message);
     }
