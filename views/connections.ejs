@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>devTinder</title>
+    <style>
+        .user-container {
+            width: 200px; /* Adjust width as needed */
+            padding: 20px;
+            background: #1e1f1f; /* Light background */
+            border-radius: 15px; /* Rounded container */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            left: 40%;
+            margin-top: 5vh;
+        }
+        
+        #photo {
+            width: 100px;
+            height: 100px;
+            border: none;
+            justify-content: center;
+            font-size: 14px;
+            object-fit: cover;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+            background-color: #ccc; /* Placeholder color */
+            border-radius: 50%; /* Makes it circular */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold; 
+        }
+        
+        .user-name, .info {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body style="background-color: rgb(0, 0, 0); margin: 0; padding: 0;padding-top:12vh ; color: white; overflow-x: hidden;color: white;">
+    <%- include('nav') %>
+    <div>
+    <% if(connections.length === 0) { %>
+       <h2 style="position: relative; left: 45%;" > No connections </h2>
+        <% } else{%>
+            <%  connections.forEach((connection)=>{ %>
+              <div class="user-container" data-id="<%= connection._id %>">
+                  <div id="photo"><img src="<%=connection.photoUrl %>" alt=""></div>
+                  <div class="user-name"><span id="firstName"><%=connection.firstName %></span> <span id="lastName"><%=connection.lastName %></span></div>
+                  <div class="info"><span id="age"><%=connection.age %> </span><span id="gender"><%=connection.gender %></span></div>
+                 </div>
+             <% }) }%>
+    </div>
+    <script src="/scripts/nav-click.js"></script>
+</body>
+</html>

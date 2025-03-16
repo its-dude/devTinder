@@ -3,7 +3,6 @@ const limit = 2;
 
 async function getUsers(page) {
     try {
-        if(page===2)window.location.replace("/feed");
         const response = await fetch(`/user/feed?page=${page || 1}&limit=${limit}`);
         return await response.json(); // Return users instead of storing them globally
     } catch (error) {

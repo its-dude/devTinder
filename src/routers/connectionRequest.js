@@ -7,6 +7,8 @@ import { ConnectionRequestModel } from "../models/connectionRequest.js";
 import { User } from "../models/user.js";
 import { compareSync } from "bcrypt";
 
+const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender _id";
+
 requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res, next) => {
     try {
         //extract status and userid and then check status is allowed or not 
@@ -69,4 +71,24 @@ requestRouter.post('/request/review/:status/:requestId',userAuth,async (req,res)
     }
 })
 
+/*
+CREATE requessts api
+get all the requests of users
+render the info
+
+*/
+requestRouter.get('/requests',userAuth,async(req,res)=>{
+    try{
+        const user = req.user;
+        user.islogin = true;
+        
+        const requests = await ConnectionRequestModel.find({
+            toUserId:user._id,
+            status:"interested"
+        }).populate('fromUserId',USER_SAFE_DATA).lean();
+        res.render('requests.ejs',{user,requests});
+    }catch(err){
+         res.status(400).json(err.message);
+    }
+})
 export { requestRouter };

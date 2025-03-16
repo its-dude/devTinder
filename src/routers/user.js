@@ -46,7 +46,10 @@ userRouter.get('/connections', userAuth, async (req, res) => {
                 return row.fromUserId;
             }
         })
-        res.status(200).json({ connections: filterConnectionRequests });
+        const user = loggedInUser;
+        user.islogin=true;
+        const connections = filterConnectionRequests;
+        res.status(200).render('connections.ejs',{user,connections});
     } catch (error) {
         res.status(400).send("Error:" + error.message);
     }
