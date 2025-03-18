@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
 import path from 'path';
 import methodOverride from 'method-override'
 
@@ -15,8 +16,6 @@ const __dirname = path.dirname(__filename);
 
 const app=express();
 
-const  PORT=3000; 
-
 app.set("view engine",'ejs');
 
 app.use(express.json());
@@ -24,6 +23,28 @@ app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname, '../public/')));
+
+const loadEnv = ()=>{
+    const envPath = path.resolve(__dirname,'../.env');
+    const envData = fs.readFileSync(envPath,'utf-8');
+
+    envData.split('\n').forEach(line=>{
+            // Remove comments and trim whitespace
+            line = line.split('#')[0].trim();
+
+            if (!line) return;
+
+        const [key,value] = line.split('=');
+        if (key && value) {
+            process.env[key.trim()] = value.trim();
+        }
+    })
+}
+
+loadEnv();
+
+const  PORT=process.env.PORT; 
+
 
 app.use('/',userRouter);
 app.use('/',authRouter);
