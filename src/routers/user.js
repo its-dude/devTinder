@@ -100,4 +100,8 @@ userRouter.get('/feed',userAuth,async (req,res)=>{
         res.send("error: "+err.message);
     }
 })
+
+userRouter.post('/chat',userAuth,async (req,res)=>{
+    res.send(req.user)
+})
 export { userRouter };
