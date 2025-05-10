@@ -58,6 +58,9 @@
                   <div id="photo"><img src="<%=connection.photoUrl %>" alt=""></div>
                   <div class="user-name"><span id="firstName"><%=connection.firstName %></span> <span id="lastName"><%=connection.lastName %></span></div>
                   <div class="info"><span id="age"><%=connection.age %> </span><span id="gender"><%=connection.gender %></span></div>
+                  <form action="http://localhost:3000/chat/<%= connection._id %>" method="GET">
+                  <button type="submit" id="chat" style="display: flex;align-items: center; justify-content: center; width: 4vw; height: 5vh; background-color: green;border: none;color: white; border-radius: 5%;">chat</button>
+              </form>
                  </div>
              <% }) }%>
     </div>

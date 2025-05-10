@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with <%= friend.firstName %>
+  </title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgb(37, 36, 51);
+      font-family: Arial, sans-serif;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      background-color: #4e5d75;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: white;
+      color: #4e5d75;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    .first-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .chat-area {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 60%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      word-wrap: break-word;
+    }
+
+    .user-msg {
+      background-color: #6c63ff;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+
+    .friend-msg {
+      background-color: #3c3b4f;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .typing-area {
+      /* background-color: #4e5d75; */
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .typing-area input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .typing-area button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      background-color: #6c63ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .typing-area button:hover {
+      background-color: #5b56e0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="top-bar">
+    <div class="profile-section">
+      <div class="profile-pic">
+        <img id="profile" src="<%= friend.photoUrl %>"
+          style="height: 6vh; width: 6vh; border-radius: 50%;  object-fit:cover;display: block;">
+      </div>
+      <div class="first-name">
+        <%= friend.firstName %>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-area" id="chat-area">
+    <% chat.forEach(function(convo) { 
+      convo.messages.forEach(function(message) { 
+  %>
+    <div class="message <%= message.senderId.toString() === user._id.toString() ? 'user-msg' : 'friend-msg' %>">
+      <%= message.text %>
+    </div>
+  <% }) 
+  }) %>
+  </div>
+
+  <form class="typing-area" action="/send-message" method="POST">
+    <input type="hidden" name="friend-id" value="<%=friend._id %>" id="f-id">
+    <input id="input" type="text" name="message" placeholder="Type a message..." required autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      const chatArea = document.getElementById("chat-area");
+      chatArea.scrollTop = chatArea.scrollHeight;
+      const to_userId = document.getElementById('f-id').value.trim();
+    const socket = io("http://localhost:3000",{
+                  auth:{
+                      toUserId:to_userId,
+                  }
+    });
+  
+    socket.emit('join', { toUserId: to_userId });
+
+    const form = document.querySelector('form')
+    const input = document.getElementById('input');
+   
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (message) {
+        socket.emit('sendMessage', { toUserId: to_userId, text: message });
+        // Show the user's own message immediately
+        const div = document.createElement('div');
+        div.className = 'message user-msg';
+        div.innerText = message;
+        chatArea.appendChild(div);
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        input.value = '';
+      }
+    });
+
+
+    socket.on('messageReceived', ({ toUserId, text }) => {
+      // Apply class based on sender
+      console.log(toUserId ,' ',text)
+      const tofreind=toUserId;
+      if (to_userId !== tofreind) {
+        console.log(text)
+        const div = document.createElement('div');
+        div.className = 'message';
+        div.innerText = text;
+
+        div.classList.add('friend-msg');
+        chatArea.appendChild(div);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+    });
+
+  </script>
+</body>
+
+</html>
