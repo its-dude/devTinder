@@ -23,7 +23,6 @@ authRouter.post('/signup',async(req,res)=>{
     try{
         //validation
         validation(req);
-        console.log(req.body);
        const {firstName,lastName,emailId,password,gender,skills,age,about,photoUrl}=req.body;
        const hash = await bcrypt.hash(password, 10); 
         try{
