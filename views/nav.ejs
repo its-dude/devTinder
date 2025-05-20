@@ -1,18 +1,123 @@
-<div style="display: flex;align-items: center; justify-content: space-between; background-color: #4e5d75; height: 10vh; width:96vw; margin:0; padding: 0 2vw; position: fixed; z-index: 100;top: 0;">
-    <div>devTinder</div>
+<style>
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #4d5660;
+      height: 10vh;
+      width: 100%;
+      margin: 0;
+      padding: 0 2vw;
+      position: fixed;
+      z-index: 100;
+      top: 0;
+    }
+  
+    .navbar-logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ffff;
+    }
+    .right{
+        
+        display: flex;
+        justify-content: end;
+        gap: 5vw;
+        align-items: center;
+        
+    }
+    .user-info {
+      display: flex;
+      gap: 5px;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .profile-img {
+      height: 6vh;
+      width: 6vh;
+      border-radius: 50%;
+      background: black;
+      object-fit: cover;
+      display: block;
+    }
+ 
+    .messenger,.bell{
+        height: 4vh;
+      width: 4vh;
+
+    }
+  
+    .user-block {
+      opacity: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      width: 10vw;
+      height: 13vh;
+      position: absolute;
+      top: 7vh;
+      right: 3vw;
+      background: rgb(37, 36, 51);
+      padding: 1vw;
+      border-radius: 8px;
+    }
+  
+    .user-block form a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+  
+  <div class="navbar">
+    <%if(!user.chat){ %>
+    <form action="/feed">
+       <button type="submit" style="border: none; background: none; padding: 0; margin: 0;">
+        <div class="navbar-logo">DevTinder</div>
+      </button>
+    </form>
+   <%}else{%>
+    <form action="/feed" method="get">
+        <button type="submit" style="border: none; background: none; padding: 0; margin: 0;">
+          <img src="/icons/home.png" alt="msg"draggable="false" class="messenger">
+        </button>
+      </form>
+    <%}%>
+
     <% if(user.islogin){ %>
-    <div style="display: flex; gap: 5px; justify-content:space-between; align-items: center;"><h3>Welcome, <%= user.firstName %>!</h3>
-        <img id="profile" src="<%= user.photoUrl %>" style="height: 6vh; width: 6vh; border-radius: 50%; background: black; object-fit:cover;display: block;">
-</div>
-<div class="user-block" style="opacity: 0; z-index: 2; display:flex;flex-direction: column; width:10vw; height:13vh; position: absolute; top: 7vh; right:3vw; background: rgb(37, 36, 51); padding:1vw; border-radius: 8;">
-    <form action="/requests"><a onclick="postData(event)" style="text-decoration: none;color: inherit;"  href="/requests">requests</a></form>
-    <form action="/connections"><a onclick="postData(event)" style="text-decoration: none;color: inherit;" href="/connections">connections</a></form>
-    <form action="/profile" method="POST"><a onclick="postData(event)" style="text-decoration: none;color: inherit;" href="/profile">profile</a></form>
-    <form action="/premimum" method="POST"><a onclick="postData(event)" style="text-decoration: none;color: inherit;" href="/premimum">premimum</a></form>
-    <form id="postForm" action="/logout" method="POST">
+    <div class="right">
+        <img src="/icons/notification.png" alt="bell"  class="bell" draggable="false">
+        <%if(!user.chat){ %>
+        <form action="/messenger" method="get">
+            <button type="submit" style="border: none; background: none; padding: 0; margin: 0;">
+              <img src="/icons/messenger.png" alt="msg"draggable="false" class="messenger">
+            </button>
+          </form>
+        <%}%>
+    <div class="user-info">
+      <input type="hidden"id="userid" value=<%=user._id%>>
+      <img id="profile" src="<%= user.photoUrl %>" class="profile-img" draggable="false">
+    </div>
+    </div>
+  
+    <div class="user-block">
+      <form action="/requests">
+        <a onclick="postData(event)" href="/requests">requests</a>
+      </form>
+      <form action="/connections">
+        <a onclick="postData(event)" href="/connections">connections</a>
+      </form>
+      <form action="/profile" method="POST">
+        <a onclick="postData(event)" href="/profile">profile</a>
+      </form>
+      <form action="/premimum" method="POST">
+        <a onclick="postData(event)" href="/premimum">premimum</a>
+      </form>
+      <form id="postForm" action="/logout" method="POST">
         <input type="hidden" name="key" value="value">
-        <a href="/" onclick="document.getElementById('postForm').submit(); return false;" style="text-decoration: none;color: inherit;">logout</a>
-    </form>    
-</div>
-<% }%>
-</div>
+        <a href="/" onclick="document.getElementById('postForm').submit(); ">logout</a>
+      </form>
+    </div>
+    <% } %>
+  </div>
+  

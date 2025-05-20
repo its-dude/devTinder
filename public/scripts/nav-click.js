@@ -3,7 +3,7 @@ function main() {
     const profile = document.getElementById('profile');
 
     // Toggle opacity on profile click
-    profile.addEventListener('click', (event) => {
+    profile?.addEventListener('click', (event) => {
         event.stopPropagation(); // Prevents click from bubbling to `document`
         routes.style.opacity = routes.style.opacity === '1' ? '0' : '1';
     });

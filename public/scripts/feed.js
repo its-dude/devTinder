@@ -6,7 +6,6 @@ async function getUsers(page) {
         const response = await fetch(`/user/feed?page=${page || 1}&limit=${limit}`);
         return await response.json(); // Return users instead of storing them globally
     } catch (error) {
-        console.log(error);
         return []; // Return an empty array to prevent crashes
     }
 }
@@ -14,7 +13,6 @@ async function getUsers(page) {
 async function main() {
     let page = 1;
     let users = await getUsers(page); // Fetch users inside `main()`
-    console.log(users);
     let user = users[count];
 
     async function fetchUser() {
@@ -23,7 +21,6 @@ async function main() {
             page++;
             users = await getUsers(page);
             count = 0;
-            console.log(limit, users);
             if (users.length === 0) {
                 document.getElementById('container').style.opacity = '0';
                 document.getElementById('no-users').style.opacity = '1';
@@ -49,8 +46,7 @@ async function main() {
                     "Content-Type": "application/json" // Optional: Include only if required by the server
                 }
             });
-            console.log("successfull")
-            fetchUser();
+             fetchUser();
         } catch (error) {
             console.error("Fetch error:", error);
         }

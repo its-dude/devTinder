@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTinder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles/messenger.css">
+</head>
+
+<body>
+    <div class="content">
+        <%-include('nav') %>
+            <div class="main">
+                <!--show the persons usr have chatted with-->
+                <div class="messages">
+                    <div class="header">
+                        <div class="tag">messages</div>
+
+                        <div class="createchat-wrapper">
+
+                            <button class="createchat" id="create-chat-button">
+                                <img src="/icons/editing.png" alt="">
+                            </button>
+
+                            <div class="create-new-chat" style="display: none;">
+                                <div class="new-chat-header" style="width: 100%;">
+                                    <h4>New chat</h4>
+                                    <input type="search" id="search-users" spellcheck="false">
+                                </div>
+
+                                <div id="create-a-group"
+                                    style="display: flex;justify-content: start;align-items: center;gap: 5px;margin-top:10px;cursor: pointer;">
+                                    <div
+                                        style="border:1px solid black;width: 40px ; height: 40px; border-radius:50%; display: flex;justify-content: center;align-items: center;background:gray;">
+                                        <img src="/icons/user.png" alt="" style="width: 25px ; ">
+                                    </div>
+                                    New group
+                                </div>
+
+                                <div class="users" id="users-in-create-chat">
+                                </div>
+                                <div class="users searched-users" id="users-in-create-chat-search">
+                                </div>
+                            </div>
+                            <div class="create-new-group-div" style="display: none;">
+                                <div class="new-chat-header"
+                                    style="width: 100%;position: relative; display: flex;flex-direction: column;">
+                                    <h4>New group</h4>
+                                </div>
+
+                                <div class="grp-action-buttons">
+                                    <button style="background: rgb(18, 202, 76);">Next</button>
+                                    <button>cancel</button>
+                                </div>
+
+                                <div class="users users-in-create-group">
+
+                                </div>
+
+                            </div>
+                            <!--setup group div -->
+                            <div class="group-setup" style="display: none;">
+                                <div class="new-chat-header"
+                                    style="width: 100%;position: relative; display: flex;flex-direction: column;">
+                                    <h4>New group</h4>
+                                </div>
+                                <form>
+                                    <div class="group-detail">
+                                        <label for="group-icon" form="group-icon" class="group-icon-label"> Provide a
+                                            group image url</label>
+                                        <input type="url" name="group-icon" class="group-icon-input"
+                                            placeholder="https://example.com/image" />
+                                    </div>
+                                    <div class="group-detail">
+                                        <label class="group-name-label">Provide a group name</label>
+                                        <input type="text" placeholder="Group name (optional)" class="group-name-input"
+                                            spellcheck="false" />
+                                    </div>
+
+                                </form>
+
+                                <div class="create-group-buttons" style="margin-top: auto;">
+                                    <button style="background: rgb(18, 202, 76);">Create</button>
+                                    <button onclick="cancel(event)">cancel</button>
+                                </div>
+                            </div>
+                            <!--group setup end-->
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-chats">
+                        <% chats.forEach((chat)=> { %>
+                            <% if(!chat.isGroup){ %>
+                                <% let lastmsg=chat.messages.length-1 %>
+                                    <% let prevuser=chat.participants.find( participant=>
+                                        participant._id.toString()!=user._id.toString()) %>
+                                        <!-- Compare ObjectIds properly -->
+                                        <div class="p-chat">
+                                            <div class="pic"><img src="<%= prevuser.photoUrl %>" alt=""></div>
+                                            <input type="hidden" data-userid=<%=prevuser._id.toString() %>
+                                            id="chat-userid" value=<%=prevuser._id.toString() %>>
+                                                <div class="info">
+                                                    <div class="name">
+                                                        <%= prevuser.firstName %>
+                                                            <%= prevuser.lastName %>
+                                                    </div>
+                                                    <div class="last-msg">
+                                                        <%if(lastmsg>=0) {%>
+                                                            <%= chat.messages[lastmsg].text %>
+                                                                <% }else{ %>
+                                                                    <h3 style="width:100%; margin: auto;">New chat</h3>
+                                                                    <%}%>
+                                                    </div> <!-- Access the text of the current message -->
+                                                </div>
+                                                <div class="offline"></div>
+                                        </div>
+                                        <%}else{ %>
+                                            <% let lastmsg=chat.messages.length-1 %>
+                                                <div class="p-chat">
+                                                    <div class="pic"><img src="<%= chat.groupIconUrl %>"
+                                                            alt="groupIcon"></div>
+                                                    <!--change to chat id--> <input type="hidden"
+                                                        data-groupChatId=<%=chat._id.toString() %>
+                                                    id="groupChatId" value=<%=chat._id.toString() %>>
+                                                        <div class="info">
+                                                            <div class="name">
+                                                                <%= chat.groupName %>
+                                                            </div>
+                                                            <div class="last-msg">
+                                                                <%if(lastmsg>=0) {%>
+                                                                    <%= chat.messages[lastmsg].text %>
+                                                                        <% }else{ %>
+                                                                            <h3>New chat</h3>
+                                                                            <%}%>
+                                                            </div> <!-- Access the text of the current message -->
+                                                        </div>
+                                                        <div class="offline"></div>
+                                                </div>
+                                                <% } %>
+
+                                                    <% }) %>
+                    </div>
+
+                </div>
+
+            </div>
+    </div>
+    <script src="/scripts/nav-click.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts/loadchat.js"></script>
+    <script>
+        const createChatWrapper = document.querySelector('.create-chat-wrapper');
+        let createNewChatBtn = document.getElementById('create-chat-button');
+        let createNewChatForm = document.querySelector('.create-new-chat');
+        const searchBtn = document.getElementById('search-users');
+        const userInChat = document.querySelector('#users-in-create-chat');
+        const userSearched = document.querySelector('#users-in-create-chat-search')
+        const createAGroupButton = document.getElementById('create-a-group');
+        const createNewGroupDiv = document.querySelector('.create-new-group-div');
+        const FinalGroupSetupDiv = document.querySelector('.group-setup');
+        const NextBtnToFillInfo = document.querySelector('.grp-action-buttons').children[0];
+        const createGroupBtn = document.querySelector('.create-group-buttons').children[0];
+        const contentDiv = document.querySelector('.content');
+        let members = [];
+        let connections;
+
+
+        function createAGroupButtonCB(event) {
+            document.querySelector('#users-in-create-chat').style.display = "none";
+            document.querySelector('#users-in-create-chat-search').style.display = "none";
+            document.querySelector('.create-new-chat').style.display = "none";
+            document.querySelector('.create-new-group-div').style.display = "flex";
+            let userContainer = document.querySelector('.users-in-create-group');
+            const isFromGroup = true;
+            if (userContainer.childElementCount === 0) appendUsers({ userContainer, isFromGroup });
+
+        }
+
+        async function createNewChatBtnCB() {
+            connections = await fetch("http://localhost:3000/connections", {
+                method: 'GET',
+                headers: {
+                    'X-From-Fetch': 'true'
+                }
+            })
+            connections = await connections.json();
+            document.querySelector('.create-new-chat').style.display = "flex";
+            let ContainerToHide = document.querySelector('#users-in-create-chat-search');
+            ContainerToHide.style.display = "none";
+            let userContainer = document.querySelector('#users-in-create-chat');
+            userContainer.style.display = "flex";
+            if (userContainer.childElementCount === 0) appendUsers({ userContainer });
+
+        };
+
+        function searchBtnCB(event) {
+            if (event.key === 'Enter') {
+                const parent = event.target.closest('.create-new-chat');
+                let ContainerToHide = parent.querySelector('#users-in-create-chat');
+                ContainerToHide.style.display = "none";
+                let userContainer = parent.querySelector('#users-in-create-chat-search');
+                userContainer.style.display = "flex";
+                if (parent && userContainer) {
+                    const tofind = event.target.value;
+                    appendUsers({ userContainer, tofind });
+                }
+            }
+        };
+
+        contentDiv.addEventListener("input", (event) => {
+            event.stopPropagation();
+            if (event.target.matches('#search-users')) {
+                if (searchBtn.value === "") {
+                    let ContainerToHide = document.querySelector('#users-in-create-chat-search');
+                    ContainerToHide.style.display = "none";
+                    let userContainer = document.querySelector('#users-in-create-chat');
+                    userContainer.style.display = "flex";
+                }
+            }
+        })
+
+        function NextBtnToFillInfoCB(e) {
+            const checkedCheckboxes = document.querySelector('.create-new-group-div').querySelectorAll('input[type="checkbox"]:checked');
+            checkedCheckboxes.forEach(checkbox => {
+                const parentDiv = checkbox.closest('.user');
+                const userId = parentDiv.querySelector('input').dataset.userid;
+                members.push(userId);
+            });
+            if (members.length === 0) {
+                alert("No participants selected");
+            } else {
+                document.querySelector('.create-new-group-div').style.display = "none";
+                document.querySelector('.group-setup').style.display = "flex";
+            }
+
+        };
+
+        function createGroupBtnCB(e) {
+            document.querySelector('.group-setup').style.display = "none";
+            const groupNameInput = document.querySelector('.group-name-input');
+            const groupName = groupNameInput.value.trim();
+
+            const groupIconInput = document.querySelector('.group-icon-input').value;
+            const body = {
+                groupName,
+                groupIconUrl: groupIconInput,
+                members,
+            };
+            members=[];
+            fetch('/createGroup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+        };
+
+
+        function appendUsers({ userContainer, tofind = "", isFromGroup = false }) {
+            if (!tofind) {
+                connections.forEach(connection => {
+                    appendUserContainer({ userContainer, connection, isFromGroup });
+                });
+            }
+            else {
+                const name = tofind.trim(' ').split(' ');
+                userContainer.innerHTML = "";
+                connections.forEach(connection => {
+                    if (connection.firstName === name[0] || connection.firstName === name[1] || connection.lastName === name[0] || connection.lastName === name[1]) {
+                        appendUserContainer({ userContainer, connection, isFromGroup });
+                    }
+                });
+            };
+        }
+
+        function appendUserContainer({ userContainer, connection, isFromGroup = false }) {
+            const userdiv = document.createElement("div");
+            const infodiv = document.createElement("div");
+            const picdiv = document.createElement("div");
+            const namediv = document.createElement("div");
+            const img = document.createElement("img");
+            const input = document.createElement("input");
+
+            img.src = `${connection.photoUrl}`;
+            img.alt = "profile";
+            namediv.innerText = `${connection.firstName} ${connection.lastName}`;
+            input.type = "hidden";
+            input.id = "chat-userid"
+            input.setAttribute('data-userid', `${connection._id}`);
+
+            userdiv.classList.add("user", `user-in-create-${isFromGroup ? "group" : "chat"}`);
+            infodiv.classList.add("info");
+            picdiv.classList.add("pic");
+            namediv.classList.add("name");
+            input.classList.add("hidden");
+
+            infodiv.appendChild(namediv);
+            picdiv.appendChild(img);
+            userdiv.appendChild(picdiv);
+            userdiv.appendChild(input);
+            userdiv.appendChild(infodiv);
+            if (isFromGroup) {
+                const box = document.createElement("div");
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                box.classList.add("checkbox");
+                box.appendChild(checkbox);
+                userdiv.appendChild(box);
+            }
+            userContainer.appendChild(userdiv);
+
+        }
+
+        function cancel(event) {
+            if (event.target.closest('.group-setup')) {
+                document.querySelector('.group-setup').style.display = "none";
+            }
+            else if (event.target.closest('.create-new-group-div')) {
+                document.querySelector('.create-new-group-div').style.display = "none";
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>

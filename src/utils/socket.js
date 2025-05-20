@@ -3,19 +3,20 @@ import jwt from "jsonwebtoken";
 
 import { ChatModel } from '../models/chat.js';
 import { ConnectionRequestModel } from '../models/connectionRequest.js';
+import { User } from '../models/user.js';
+import connection, { disconnect } from 'mongoose';
+
+const onlineUsers = new Map();
 
 export const intialiseSocket = (server) => {
   const io = new Server(server);
-  io.use( async(socket, next) => {
+
+  io.use(async (socket, next) => {
     try {
       const cookieHeader = socket.handshake.headers.cookie;
-      let toUserId     = socket.handshake.auth?.toUserId;
-      toUserId = (!toUserId)?socket.handshake.headers?.touserid : toUserId;
-      if(!toUserId){
-        return next(new Error("Invalid connection!"));
-      }
+
       const cookies = {};
-      
+
       if (cookieHeader) {
         cookieHeader.split("; ").forEach(pair => {
           const [key, value] = pair.split("=");
@@ -29,62 +30,111 @@ export const intialiseSocket = (server) => {
       }
 
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
-      //check if both user are connected
-      const connection = await ConnectionRequestModel.findOne({
-        $or:[ {fromUserId:decoded.id  , toUserId:toUserId},
-              {fromUserId:toUserId  , toUserId:decoded.id} ],
-        status:"accepted",
-      });
-      if(!connection)return next(new Error("Invalid connection!"));
       // Optional: attach user info to socket for later use
+      const user = await User.find({ _id: decoded.id });
+      const name = `${user.firstName} ${user.lastName}`
       socket.userId = decoded.id;
+      socket.name = name;
+      socket.image=user.photoUrl;
+      onlineUsers.set(decoded.id, socket.id);
       next(); //  allow connection
     } catch (error) {
-      console.log(error.message)
       next(new Error("Authentication failed")); //  deny connection
     }
   });
 
+  io.on("connection", async (socket) => {
 
-  io.on("connection", socket => {
+    const userConnections = await ConnectionRequestModel.find({
+      $or: [{ fromUserId: socket.userId }, { toUserId: socket.userId }],
+      status: "accepted",
+    });
 
+    const friends = userConnections.map(userConnection => {
+      if (userConnection.fromUserId.toString() == socket.userId) {
+        return userConnection.toUserId.toString();
+      } else {
+        return userConnection.fromUserId.toString();
+      }
+    })
+
+    friends.forEach(friend => {
+      let friendsocketid = onlineUsers.get(friend);
+      if (friendsocketid) {
+        io.to(socket.id).emit("online", { userId: friend });
+        io.to(friendsocketid).emit("online", { userId: socket.userId });
+      }
+    })
     //join user to their room
     socket.on("join", async ({ toUserId }) => {
       try {
         const userId = socket.userId;
+        if (!toUserId) {
+          return next(new Error("Invalid connection!"));
+        }
+        const connection = await ConnectionRequestModel.findOne({
+          $or: [{ fromUserId: userId, toUserId: toUserId },
+          { fromUserId: toUserId, toUserId: userId }],
+          status: "accepted",
+        });
+        if (!connection) return next(new Error("Invalid connection!"));
+
         const roomId = [userId, toUserId].sort().join("_");
-        //  console.log(userId + " joined to room "+roomId);
         socket.join(roomId);
       }
       catch (err) {
         console.log(err.message)//to be refine later
       }
-
     })
 
-    socket.on("sendMessage", async ({ toUserId, text }) => {
+    socket.on("sendMessage", async ({ toUserId, groupChatId, message }) => {
       try {
-      const userId = socket.userId;
-      const roomId = [userId, toUserId].sort().join("_");
-        let chat = await ChatModel.findOne({
-          participants: { $all: [userId, toUserId] },
-        });
+        const userId = socket.userId;
+        const roomId = [userId, toUserId].sort().join("_");
+        const groupRoomId = [groupChatId, process.env.GROUP_KEY].join("_");
+        if (toUserId) {
+          let chat = await ChatModel.findOne({
+            participants: { $all: [userId, toUserId] },
+          });
 
-        if (!chat) {
-          chat = new ChatModel({
-            participants: [userId, toUserId],
-            messages: [],
+          if (!chat) {
+            chat = new ChatModel({
+              participants: [userId, toUserId],
+              messages: [],
+            })
+          }
+          chat.messages.push({ senderId: userId, text: message });
+          io.to(roomId).emit("messageReceived", { fromUserId: userId,name:socket.name,image:socket.image,message });
+          await chat.save();
+        }else{
+          let chat = await ChatModel.findOne({
+           _id:groupChatId,
+           participants:[userId],
+           isGroup:true,  
           })
+
+          if(chat){
+            chat.messages.push({senderId:userId,text:message});
+            io.to(groupRoomId).emit("messageReceived",{fromUserId:userId,groupChatId,name:socket.name,image:socket.image,message});
+            await chat.save();
+          }
         }
 
-        chat.messages.push({ senderId: userId, text });
-        io.to(roomId).emit("messageReceived", { toUserId, text });
-        await chat.save();
+        
       } catch (err) {
         console.log(err.message);
       }
     })
 
+    socket.on("disconnect", async () => {
+      friends.forEach(friend => {
+        let friendsocketid = onlineUsers.get(friend._id);
+        if (friendsocketid) {
+          io.to(friendsocketid).emit("offline", { userId: socket.userid });
+        }
+      })
+      onlineUsers.delete(socket.userId);
+    })
 
   })
 } 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevTinder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85));
+      background-size: cover;
+      color: #fff;
+    }
+    .glow-button-green {
+      background-color: #00FF7F;
+      color: #000;
+      box-shadow: 0 0 6px #00FF7F, 0 0 10px #00FF7F;
+      transition: all 0.3s ease;
+    }
+    .glow-button-green:hover {
+      background-color: #32FF99;
+      box-shadow: 0 0 8px #00FF7F, 0 0 14px #00FF7F;
+    }
+    .header-text {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    
+  </style>
+</head>
+<body class="h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center px-6 py-4">
+    <h1 class="header-text">DevTinder</h1>
+    <a href="/login" class="px-5 py-2 border border-cyan-400 rounded-lg hover:bg-cyan-500 hover:text-black transition">Login</a>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex flex-col justify-center items-center text-center space-y-8">
+
+    <h2 class="text-5xl font-extrabold">Start Something Epic</h2>
+
+    <a href="/signup" class="px-8 py-3 text-lg font-medium rounded-xl glow-button-green">
+      Create Account
+    </a>
+
+  </main>
+
+</body>
+</html>

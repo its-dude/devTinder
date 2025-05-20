@@ -5,8 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>devTinder</title>
     <style>
+           * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Afacad Flux, sans-serif;
+        }
+
+        /* Body styling */
+        html,
+        body {
+            height:100vh;
+            width: 100vw;
+            background-color: black;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+        }    
         .user-container {
             width: 200px; /* Adjust width as needed */
+            max-height: 300px;
             padding: 20px;
             background: #1e1f1f; /* Light background */
             border-radius: 15px; /* Rounded container */
@@ -16,8 +36,7 @@
             align-items: center;
             gap: 10px;
             position: relative;
-            left: 40%;
-            margin-top: 5vh;
+            margin: 5vh auto;
         }
         
         #photo {
@@ -28,10 +47,10 @@
             font-size: 14px;
             object-fit: cover;
         }
-        img{
+       #photo img{
             width: 100px;
             height: 100px;
-            background-color: #ccc; /* Placeholder color */
+            background-color: none; /* Placeholder color */
             border-radius: 50%; /* Makes it circular */
             display: flex;
             align-items: center;

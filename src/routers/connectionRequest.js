@@ -9,7 +9,7 @@ import { compareSync } from "bcrypt";
 
 const USER_SAFE_DATA = "firstName lastName photoUrl age about  gender _id";
 
-requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res, next) => {
+requestRouter.post('/request/send/:status/:toUserId', userAuth, async (req, res) => {
     try {
         //extract status and userid and then check status is allowed or not 
         //check wheater it is already sent or not or the request is for same user of non existing user
@@ -81,7 +81,7 @@ requestRouter.get('/requests',userAuth,async(req,res)=>{
     try{
         const user = req.user;
         user.islogin = true;
-        
+        user.chat=false;
         const requests = await ConnectionRequestModel.find({
             toUserId:user._id,
             status:"interested"

@@ -65,7 +65,8 @@ const userSchema = new Schema( {
     about:{
         type:String,
         maxlength:[200,"Only 200 characters are allowed"]
-    }
+    },
+    lastActive:Date
 },{timestamps:true})
 
 userSchema.methods.getJWT = async function(){

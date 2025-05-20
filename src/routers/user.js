@@ -49,7 +49,12 @@ userRouter.get('/connections', userAuth, async (req, res) => {
         const user = loggedInUser;
         user.islogin=true;
         const connections = filterConnectionRequests;
-        res.status(200).render('connections.ejs',{user,connections});
+        const isThroughFetch = req.headers['x-from-fetch']==='true';
+        if(isThroughFetch){
+            console.log("sending through fetch");
+            res.status(200).json(connections);
+        }else res.status(200).render('connections.ejs',{user,connections});
+    
     } catch (error) {
         res.status(400).send("Error:" + error.message);
     }
@@ -94,14 +99,12 @@ userRouter.get('/feed',userAuth,async (req,res)=>{
     try{
         let user=req.user;
         user.islogin=true;
-        
+        user.chat=false;
         res.render('feed',{user});
     }catch(err){
         res.send("error: "+err.message);
     }
 })
 
-userRouter.post('/chat',userAuth,async (req,res)=>{
-    res.send(req.user)
-})
+
 export { userRouter };

@@ -11,7 +11,7 @@ import {authRouter} from './routers/auth.js';
 import { requestRouter } from './routers/connectionRequest.js';
 import { profileRouter } from './routers/profile.js';
 import { userRouter } from './routers/user.js';
-import {chatRouter} from './routers/chat.js'
+import {messenger} from './routers/messenger.js'
 import {intialiseSocket} from './utils/socket.js'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -53,7 +53,7 @@ app.use('/',userRouter);
 app.use('/',authRouter);
 app.use('/',requestRouter);
 app.use('/',profileRouter);
-app.use('/',chatRouter);
+app.use('/',messenger);
 //to catch any unhandled error
 app.get('/', (req, res) => {
     try {
@@ -76,4 +76,4 @@ connecDB()
 })
 .catch(err=>{
     console.log("error in establishing connection");
-}) 
+})

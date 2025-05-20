@@ -15,23 +15,27 @@
             position: relative;
             left: 30%;
             bottom: 30%;
-            text-align: center;
+            text-align: start;
         }
-        input {
-            width: 100%;
+        input, select {
+            background-color: #374151;
+            color: #FFFFFF;
+            width: 30vw;
             padding: 8px;
             margin: 8px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #414B5A;
+            border-radius: 10px;
+            display: block;
         }
         button {
-            background-color: #28a745;
+            background-color: #21d25f;
             color: white;
             border: none;
             padding: 10px;
             cursor: pointer;
-            width: 100%;
+            width: 30vw;
             margin-top: 10px;
+            border-radius: 10px;
         }
         button:hover {
             background-color: #218838;
@@ -48,9 +52,9 @@
         }
     </style>
 </head>
-<body style="background-color: rgb(0, 0, 0); margin: 0; padding: 0; color: white; overflow: hidden;">
+<body style="background-color: #111827; margin: 0; padding: 0; color: white; overflow-x: hidden; font-family: Afacad Flux,sans-serif; ">
     <%- include('nav') %>
-    <div class="container" style="position: absolute;top: 15vh;">
+    <div class="container" style="position: absolute;top: 15vh;background: #1F2937;color: #FFFFFF;">
         <h2>Login</h2>
         <form action="/login" method="POST">
             <label for="emailId">Email ID:</label>

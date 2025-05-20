@@ -14,7 +14,8 @@ const __dirname = path.dirname(__filename);
 
 //create user
 authRouter.get('/signup',(req,res)=>{
-    const user ={};
+    const user ={chat:false,};
+    
     res.render('signup',{user});
 })
 
@@ -22,11 +23,13 @@ authRouter.post('/signup',async(req,res)=>{
     try{
         //validation
         validation(req);
+        console.log(req.body);
        const {firstName,lastName,emailId,password,gender,skills,age,about,photoUrl}=req.body;
        const hash = await bcrypt.hash(password, 10); 
         try{
-            const user=await User.create({firstName,lastName,emailId,password:hash,skills,gender,age,about,photoUrl});
-            res.status(200).json({"msg":"success"});
+            const login_user=await User.create({firstName,lastName,emailId,password:hash,skills,gender,age,about,photoUrl});
+            const user={islogin:false,chat:false}
+            res.render('login',{user});
         }catch(err){
             res.status(501).json({"error":"SIGNUP FAILED : "+err.message});
         }
@@ -38,7 +41,7 @@ authRouter.post('/signup',async(req,res)=>{
 //login
 authRouter.get('/login',(req,res)=>{
     try{ 
-    const user ={};
+    const user ={chat:false};
     res.render('login',{user});
     }catch(error){
         res.status(500).send("Error : "+error.message);

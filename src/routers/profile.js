@@ -15,6 +15,8 @@ profileRouter.get('/profile', userAuth, async (req, res) => {
     try {
         const user = req.user;
         user.islogin=true;
+        user.chat = false;
+        
         // res.send(`Hello ${user.firstName}`);
         res.render('profile',{user});
     } catch (error) {

@@ -1,0 +1,413 @@
+
+/* Reset and general styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Afacad Flux, sans-serif, Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body styling */
+html,
+body {
+    height: calc(100vh - 10vh);
+    width: 100%;
+    color: #333;
+    line-height: 1.6;
+    font-size: 16px;
+
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    margin-top: 10vh;
+    padding: 0;
+}
+
+.main {
+    background: rgba(26, 26, 27, 0.921);
+    width: 100%;
+    height: calc(100vh - 10vh);
+    display: flex;
+
+}
+
+.messages {
+    background-color: rgb(49, 49, 57);
+    padding: 0 ;
+    border-right: 1px solid rgb(37, 36, 36);
+    flex-grow: 2;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0;
+    max-width: 40vw;
+    /* this allows internal truncation */
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+img {
+    height: 4vh;
+}
+
+.chat {
+    flex: 3;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    /* stays above the user list */
+    margin: 0;
+    padding: 0 10px;
+    height: 7vh;
+     background: rgb(64, 67, 67);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tag {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: #ffff;
+}
+
+.createchat {
+    border: none;
+    background: none;
+}
+
+.p-chats {
+    width: 100%;
+    margin: auto;
+    padding: 10px;
+    font-family: sans-serif;
+    
+}
+
+.p-chat {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 0;
+    /* KEY: Prevents content from growing parent */
+}
+
+.online{
+    margin-right: 0;
+    margin-left: auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: green;
+}
+
+.p-chat:hover {
+    background-color: #3e3b3b;
+}
+
+.pic ,.pic img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #ccc;
+    /* Placeholder */
+    background-size: cover;
+    background-position: center;
+    margin-right: 15px;
+}
+
+.name {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #ffff;
+}
+
+.info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    /* allows ellipsis to work */
+}
+
+.last-msg {
+    font-size: 0.9rem;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.messages::-webkit-scrollbar {
+    width: 6px;
+    height: 10px;
+    /* make scrollbar narrower */
+}
+
+.messages::-webkit-scrollbar-track {
+    background: transparent;
+    /* optional background */
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background-color: rgb(38, 38, 38);
+    /* scrollbar thumb color */
+    border-radius: 10px;
+}
+
+.chat {
+opacity: 1;
+display: flex;
+flex-direction: column;
+height: 100%;
+background: rgba(26, 26, 27, 0.921);
+flex: 3;
+position: relative;
+}
+
+/* Header */
+.chat-header {
+height: 60px;
+background: rgb(64, 67, 67);
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 0 15px;
+border-left: 1px solid #ccc;
+}
+
+.info-wrapper{
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.chat-user {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.chat-user .pic ,.chat-user .pic img {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+background-color: #ccc;
+margin-right: 10px;
+background-size: cover;
+background-position: center;
+}
+
+.chat-user .name {
+font-weight: bold;
+font-size: 1rem;
+}
+
+.call button {
+background: none;
+border: none;
+margin-left: 10px;
+cursor: pointer;
+padding: 5px;
+}
+
+.call img {
+height: 24px;
+width: 24px;
+}
+
+/* Chat Area */
+.chat-area {
+flex: 1;
+padding: 10px;
+overflow-y:auto;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.spacer {
+margin-top: auto; /* Pushes rest of messages to the bottom */
+}
+/* Messages */
+.message {
+max-width: 70%;
+padding: 10px 14px;
+border-radius: 10px;
+font-size: 0.95rem;
+word-wrap: break-word;
+display: inline-block;
+line-height: 1.4;
+display: flex;
+flex-direction: column;
+}
+/* message sender name  */
+.user-msg {
+background-color: #dcf8c6;
+align-self: flex-end;
+border-bottom-right-radius: 0;
+}
+
+.friend-msg {
+position: relative;
+background-color: #fff;
+align-self: flex-start;
+border-bottom-left-radius: 0;
+}
+
+.sendername{
+    position: relative;
+    top:0 ; 
+}
+
+
+/* Send Message */
+.send-msg {
+display: flex;
+padding: 10px 15px;
+background-color: #2c2b2b;
+border-top: 1px solid #ccc;
+}
+
+.send-msg input[type="text"] {
+flex: 1;
+padding: 10px;
+background-color:#2c2b2b;;
+border: 1px solid #000000;
+border-radius: 20px;
+outline: none;
+color: white;
+font-size: 1rem;
+}
+
+.send-msg button {
+margin-left: 10px;
+background-color: #000000;
+color: white;
+border: none;
+padding: 10px 18px;
+border-radius: 20px;
+cursor: pointer;
+font-weight: bold;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+.chat-header .name {
+font-size: 0.9rem;
+}
+.send-msg input[type="text"] {
+font-size: 0.9rem;
+}
+.send-msg button {
+padding: 8px 14px;
+font-size: 0.9rem;
+}
+}
+
+.createchat-wrapper{
+    position: relative;
+}
+.create-new-chat,.create-new-group-div,.group-setup{
+    width: 18vw;
+    min-width: 300px;
+    height: 70vh;
+    background: darkgoldenrod;
+    position: fixed;
+    z-index: 10;
+    left: 30vw;
+    padding: 10px;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    overflow:hidden;
+}
+.users{
+    width: 100%;
+    padding: 10px 0;   
+    background: rebeccapurple;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.user{
+    display: flex;
+    gap: 2px;
+    background: yellow;
+    cursor: pointer;
+}
+
+input[type="search"]{
+    width: 100%;
+    min-height: 30px;
+    background: none;
+    outline: none;
+    border: 1px solid rgb(33, 33, 33);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 0.9rem;
+    /* caret-color: white; */
+}
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: green; /* For modern browsers */
+    cursor: pointer;
+    margin-left: auto; /* Push to far right */
+}
+
+.checkbox{
+    display: flex;
+    align-items: center;
+}
+
+.grp-action-buttons,.create-group-buttons{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0 ;
+    gap:5px;
+}
+
+.grp-action-buttons button,.create-group-buttons button{
+    flex: 1;
+    min-height: 30px;
+    height: auto;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+}
+
+
+ .group-detail input{
+    width: 14vw;
+ }
+
+  .group-name-label,.group-icon-label {
+    font-size: 0.95rem;
+    color: white;
+  }
+  
+  .group-name-input,.group-icon-input{
+    padding: 8px 12px;
+    background-color: #2c2c2c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+  }
+  
