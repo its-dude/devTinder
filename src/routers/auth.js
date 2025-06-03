@@ -52,9 +52,9 @@ authRouter.post('/login',async(req,res)=>{
         //check password is correct or not
         const {emailId,password} = req.body;
         const user=await User.findOne({emailId});
-        if(!user){throw new Error("check your email or password")};//if user not found
+        if(!user){throw new Error("check your email ")};//if user not found
         const iscorrect=await user.validatePassword(password);//compare  the password 
-        if(!iscorrect){throw new Error("check your email or password")};
+        if(!iscorrect){throw new Error("check your  password")};
         const token= await user.getJWT();
         //set cookie
         res.cookie("_id",token);
@@ -62,7 +62,7 @@ authRouter.post('/login',async(req,res)=>{
     }catch(err){
         res.status(400).send(err.message);
     }
-})
+}) 
 
 authRouter.post('/logout',async(req,res)=>{
     try{

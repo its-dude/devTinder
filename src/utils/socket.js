@@ -31,11 +31,10 @@ export const intialiseSocket = (server) => {
 
       const decoded = jwt.verify(token, process.env.SECRET_KEY);
       // Optional: attach user info to socket for later use
-      const user = await User.find({ _id: decoded.id });
+      const user = await User.findOne({ _id: decoded.id });
       const name = `${user.firstName} ${user.lastName}`
       socket.userId = decoded.id;
       socket.name = name;
-      socket.image=user.photoUrl;
       onlineUsers.set(decoded.id, socket.id);
       next(); //  allow connection
     } catch (error) {
@@ -66,21 +65,30 @@ export const intialiseSocket = (server) => {
       }
     })
     //join user to their room
-    socket.on("join", async ({ toUserId }) => {
+    socket.on("join", async ({ toUserId, groupChatId }) => {
       try {
         const userId = socket.userId;
-        if (!toUserId) {
-          return next(new Error("Invalid connection!"));
-        }
-        const connection = await ConnectionRequestModel.findOne({
-          $or: [{ fromUserId: userId, toUserId: toUserId },
-          { fromUserId: toUserId, toUserId: userId }],
-          status: "accepted",
-        });
-        if (!connection) return next(new Error("Invalid connection!"));
+        if (toUserId && !groupChatId) {
+          const connection = await ConnectionRequestModel.findOne({
+            $or: [{ fromUserId: userId, toUserId: toUserId },
+            { fromUserId: toUserId, toUserId: userId }],
+            status: "accepted",
+          });
+          if (!connection) return next(new Error("Invalid connection!"));
+          const roomId = [userId, toUserId].sort().join("_");
+          socket.join(roomId);
 
-        const roomId = [userId, toUserId].sort().join("_");
-        socket.join(roomId);
+        }
+        else if (groupChatId && !toUserId) {
+          const groupChat = await ChatModel.findOne({
+            participants: userId,
+            isGroup: true,
+          })
+          if (!groupChat) return next(new Error("Sorry you are not a member of this group"));
+          const groupRoomId = [groupChatId, process.env.GROUP_KEY].join("_");
+          socket.join(groupRoomId);
+
+        }
       }
       catch (err) {
         console.log(err.message)//to be refine later
@@ -95,6 +103,7 @@ export const intialiseSocket = (server) => {
         if (toUserId) {
           let chat = await ChatModel.findOne({
             participants: { $all: [userId, toUserId] },
+            isGroup: false,
           });
 
           if (!chat) {
@@ -104,26 +113,72 @@ export const intialiseSocket = (server) => {
             })
           }
           chat.messages.push({ senderId: userId, text: message });
-          io.to(roomId).emit("messageReceived", { fromUserId: userId,name:socket.name,image:socket.image,message });
+          io.to(roomId).emit("messageReceived", { fromUserId: userId, name: socket.name, image: socket.image, message });
           await chat.save();
-        }else{
+        } else {
           let chat = await ChatModel.findOne({
-           _id:groupChatId,
-           participants:[userId],
-           isGroup:true,  
+            _id: groupChatId,
+            participants: userId,
+            isGroup: true,
           })
-
-          if(chat){
-            chat.messages.push({senderId:userId,text:message});
-            io.to(groupRoomId).emit("messageReceived",{fromUserId:userId,groupChatId,name:socket.name,image:socket.image,message});
+          if (chat) {
+            chat.messages.push({ senderId: userId, text: message });
+            io.to(groupRoomId).emit("messageReceived", { fromUserId: userId, groupChatId, name: socket.name, message });
             await chat.save();
           }
         }
 
-        
+
       } catch (err) {
         console.log(err.message);
       }
+    })
+
+    socket.on('call-user', to => {
+      const otherUserSocketId = onlineUsers.get(to);
+      if (otherUserSocketId) {
+        socket.to(otherUserSocketId).emit('incoming-call',{from:socket.userId , name:socket.name});
+      }else if(!otherUserSocketId){
+        console.log("user is offline");
+        socket.emit('callee-offline');
+      }
+    
+    })
+
+    socket.on('accept-call', data => {
+      const { to } = data;
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('call-accepted' ,{from:socket.userId });
+    })
+    socket.on('reject-call', data => {
+      const { to } = data;
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('callee-rejected-call');
+    })
+
+    socket.on('offer',data=>{
+      const { to , offer } = data;
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('offer' ,{from:socket.userId ,offer});
+    })
+    socket.on('answer',data=>{
+      const { to , answer } = data;
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('answer' ,{from:socket.userId ,answer});
+    })
+    socket.on('end-call',to=>{
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('end-call')
+    })
+    socket.on('end-up-calling',to=>{
+      console.log("end up ",to);
+      const otherUserSocketId = onlineUsers.get(to);
+      socket.to(otherUserSocketId).emit('end-up-calling')
+    })
+    socket.on('ice-candidate',data=>{
+      const {candidate , to} = data;
+      const userSocketId = onlineUsers.get(to);
+      socket.to(userSocketId).emit('ice-candidate',candidate)
     })
 
     socket.on("disconnect", async () => {

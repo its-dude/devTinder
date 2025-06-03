@@ -2,10 +2,10 @@ function main() {
     const routes = document.querySelector('.user-block');
     const profile = document.getElementById('profile');
 
-    // Toggle opacity on profile click
+    // Toggle display on profile click
     profile?.addEventListener('click', (event) => {
         event.stopPropagation(); // Prevents click from bubbling to `document`
-        routes.style.opacity = routes.style.opacity === '1' ? '0' : '1';
+        routes.style.display = routes.style.display === 'none' ? 'flex' : 'none';
     });
 
     // Hide `.user-block` when clicking anywhere else

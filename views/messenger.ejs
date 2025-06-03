@@ -105,7 +105,7 @@
                                         <div class="p-chat">
                                             <div class="pic"><img src="<%= prevuser.photoUrl %>" alt=""></div>
                                             <input type="hidden" data-userid=<%=prevuser._id.toString() %>
-                                            id="chat-userid" value=<%=prevuser._id.toString() %>>
+                                            class="chat-userid" value=<%=prevuser._id.toString() %>>
                                                 <div class="info">
                                                     <div class="name">
                                                         <%= prevuser.firstName %>
@@ -128,7 +128,7 @@
                                                             alt="groupIcon"></div>
                                                     <!--change to chat id--> <input type="hidden"
                                                         data-groupChatId=<%=chat._id.toString() %>
-                                                    id="groupChatId" value=<%=chat._id.toString() %>>
+                                                    class="groupChatId" value=<%=chat._id.toString() %>>
                                                         <div class="info">
                                                             <div class="name">
                                                                 <%= chat.groupName %>
@@ -147,7 +147,6 @@
 
                                                     <% }) %>
                     </div>
-
                 </div>
 
             </div>
@@ -155,6 +154,7 @@
     <script src="/scripts/nav-click.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/scripts/loadchat.js"></script>
+    <script src="/scripts/dragLocalVideo.js"></script>
     <script>
         const createChatWrapper = document.querySelector('.create-chat-wrapper');
         let createNewChatBtn = document.getElementById('create-chat-button');
@@ -261,6 +261,31 @@
                 },
                 body: JSON.stringify(body)
             })
+            .then(res=>{
+                if(res.status===200){
+                     return res.json();
+                }else return null;
+            })
+            .then(group=>{
+                if(group){
+                    const p_chats = document.querySelector('.p-chats');
+                    const chatBlock = `<div class="p-chat">
+        <div class="pic"><img src="${group.photoUrl}" alt=""></div>
+        <input type="hidden" data-groupChatId=${group._id}
+        class="groupChatId" value=${group._id}>
+            <div class="info">
+                <div class="name">
+                    ${group.name}
+                </div>
+                <div class="last-msg">
+                    Group Created
+                </div> <!-- Access the text of the current message -->
+            </div>
+    </div>`
+                    p_chats.insertAdjacentHTML('afterbegin',chatBlock);
+               }else alert("Group creation failed!");
+            })
+
         };
 
 
@@ -293,7 +318,7 @@
             img.alt = "profile";
             namediv.innerText = `${connection.firstName} ${connection.lastName}`;
             input.type = "hidden";
-            input.id = "chat-userid"
+            input.classList.add("chat-userid");
             input.setAttribute('data-userid', `${connection._id}`);
 
             userdiv.classList.add("user", `user-in-create-${isFromGroup ? "group" : "chat"}`);
@@ -307,6 +332,7 @@
             userdiv.appendChild(picdiv);
             userdiv.appendChild(input);
             userdiv.appendChild(infodiv);
+
             if (isFromGroup) {
                 const box = document.createElement("div");
                 const checkbox = document.createElement("input");
@@ -327,7 +353,6 @@
                 document.querySelector('.create-new-group-div').style.display = "none";
             }
         }
-
 
     </script>
 </body>

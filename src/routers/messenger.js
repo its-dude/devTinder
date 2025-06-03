@@ -12,7 +12,7 @@ messenger.get('/messenger',userAuth,async(req,res)=>{
     user.islogin=true;
     const chats = await ChatModel.find({
         participants:{$all:[user._id]}
-    }).populate({ path:"messages.senderId",select: "firstName lastName photoUrl" })
+    }).sort({updatedAt:-1}).populate({ path:"messages.senderId",select: "firstName lastName photoUrl" })
       .populate({ path:"participants",select: "firstName lastName photoUrl" })
       .lean();
 
@@ -31,9 +31,9 @@ messenger.get('/chat/:toUserid',userAuth,async(req,res)=>{
             status:"accepted"
         });
         if(!connection)throw new Error("Sorry, you both are not connected");
-        const friend = await User.findOne({_id:toUserId});
-        const chat = await ChatModel.find({
-            participants:{$all:[user._id,toUserId]}
+        const chat = await ChatModel.findOne({
+            participants:{$all:[user._id,toUserId]},
+            isGroup:false,
         }).populate({ path:"messages.senderId",select: "firstName lastName photoUrl lastActive" });
          user.chat=true;
         //  res.render('chat',{user,friend,chat});
@@ -54,16 +54,18 @@ messenger.post('/createGroup',userAuth,async(req,res)=>{
            admin:req.user._id,
            participants:[...members,req.user._id],
          })
-         res.json({"message":"group created"});
+         res.status(200).json(groupChat);
      }
      catch(err){
-        res.json(err.message);
+        res.status(400).json(err.message);
      }
 })
 
 messenger.get('/groupChat/:chatId',userAuth,async(req,res)=>{
     try {
-        const chat = await ChatModel.findOne({_id:req.params.chatId});
+        const chat = await ChatModel.findOne({_id:req.params.chatId})
+                                    .populate({ path:"messages.senderId",select: "firstName lastName photoUrl lastActive" })
+                                    .lean()
         res.json(chat);
     } catch (error) {
         res.status(400).json(error.message);
