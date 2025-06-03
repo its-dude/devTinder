@@ -27,26 +27,9 @@ app.use(methodOverride('_method'));
 app.use(express.urlencoded({extended:true})); 
 app.use(express.static(path.join(__dirname, '../public/')));
 
-const loadEnv = ()=>{
-    const envPath = path.resolve(__dirname,'../.env');
-    const envData = fs.readFileSync(envPath,'utf-8');
 
-    envData.split('\n').forEach(line=>{
-            // Remove comments and trim whitespace
-            line = line.split('#')[0].trim();
-
-            if (!line) return;
-
-        const [key,value] = line.split('=');
-        if (key && value) {
-            process.env[key.trim()] = value.trim();
-        }
-    })
-}
-
-loadEnv();
 intialiseSocket(server);
-const  PORT=process.env.PORT; 
+const  PORT=process.env.PORT||3000; 
 
 
 app.use('/',userRouter);
