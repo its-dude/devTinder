@@ -1,7 +1,7 @@
 let p_chats = document.querySelector('.p-chats');
 let messagediv = document.querySelector('#message');
 const onlineUsers = new Map();
-const socket = io("http://localhost:3000", {});
+const socket = io();
 
 
 // Online status
