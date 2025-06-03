@@ -17,6 +17,8 @@
       font-size: 1.75rem;
       font-weight: 700;
       color: #ffff;
+      display: flex;
+      flex: start;
     }
     .right{
         
@@ -72,7 +74,7 @@
     <%if(!user.chat){ %>
     <form action="/feed">
        <button type="submit" style="border: none; background: none; padding: 0; margin: 0;">
-        <div class="navbar-logo">DevTinder</div>
+        <div class="navbar-logo">Dev<span style="color: aquamarine;">Meet</span> </div>
       </button>
     </form>
    <%}else{%>

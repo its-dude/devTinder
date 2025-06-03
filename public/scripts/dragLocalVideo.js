@@ -10,8 +10,6 @@ function drag(block) {
         const rect = block.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
-
-        console.log("mouse down", isMouseDown);
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -22,16 +20,12 @@ function drag(block) {
             block.style.position = 'absolute';
             block.style.left = x + 'px';
             block.style.top = y + 'px';
-
-            console.log("moving", x, y);
         }
-        console.log("normal moving");
     });
 
     document.addEventListener('mouseup', (e) => {
         if (isMouseDown) {
             isMouseDown = false;
-            console.log("mouse up", isMouseDown);
         }
     });
 }

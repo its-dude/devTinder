@@ -141,7 +141,11 @@ document.body.addEventListener('click', (event) => {
     }
 
     if (event.target.closest('.video-call')) {
-         makeVideoCall("calling");
+         makeCall({status:"calling",audioCall:false});
+    }
+
+    if (event.target.closest('.audio-call')) {
+         makeCall({status:"calling",audioCall:true});
     }
 
 });
@@ -363,9 +367,9 @@ function appendP_chats({ fromUserId, groupChatId, name, message, image }) {
 let peer;
 let localStream;
 let remoteStream;
-let localVideo = document.getElementById('localVideo');
-let remoteVideo = document.getElementById('remoteVideo');
-
+let localVideo ;
+let remoteVideo ;
+let remoteAudio ;
 const config = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' } // Free STUN server
@@ -374,31 +378,31 @@ const config = {
 
 let callStatus;
 let content;
-
-async function makeVideoCall(status){
+let isAudioCall;
+async function makeCall({status,audioCall}){
+     const to = document.querySelector('#chatting-userid').value;
      content = document.querySelector('.content');
+     isAudioCall=audioCall
      callStatus=`<div id="call-status">
                 <p>${status}</p>
                 <button id="endUpCalling"> <img src="/icons/call-hangup.png"> </button>
                 </div>`;
      content.insertAdjacentHTML('afterbegin',callStatus);
-    const to = document.querySelector('#chatting-userid').value;
-    // console.log(`caller id is ${myid}`)
-    // console.log(`sending msg to ${to} and offer is ${JSON.stringify(offer)}`);
     setTimeout(() => {
-        document.getElementById('endUpCalling').addEventListener('click',()=>{
+        document.getElementById('endUpCalling')?.addEventListener('click',()=>{
             document.querySelector('#call-status').remove();
             socket.emit('end-up-calling',to)
         })
-    }, 400);
-    socket.emit('call-user', to);
+    }, 500);
+    socket.emit('call-user',{ to ,isAudioCall});
 }
 
 
 function handleIncomingCall(info){
+    isAudioCall=info.isAudioCall;
     const content=document.querySelector('.content');
     const incomingCallDiv =`   <div id="incoming-call">
-    <div id="caller-info">incoming-call from ${info.name}</div>
+    <div id="caller-info">incoming ${info.isAudioCall?"audio":"video"} call from ${info.name}</div>
     <div id="reject-receive-buttons">
         <button id="accept-call"><img src="/icons/call-accept.png" alt=""></button>
         <button id="reject-call"><img src="/icons/call-hangup.png" alt=""></button>
@@ -434,6 +438,21 @@ function displayVideoDiv(otherUserOnCall){
 
 };
 
+function displayAudioDiv({from , name}){
+    const maindiv = document.querySelector('.main');
+    const audioCallBlock = `<div class="call-block audio-call-block">
+    <input type="hidden" id="otherUserOnCall" value=${from} >
+    <div class="name">${name}</div>
+    <audio id="remoteAudio" autoplay ></audio>
+    <button id="end-call-btn"><img src="/icons/call-hangup.png" alt=""></button>
+    </div>`;
+    maindiv.insertAdjacentHTML('beforeend',audioCallBlock);
+    setTimeout(() => {
+        document.querySelector('#end-call-btn')?.addEventListener('click', endCall);      
+    }, 1000);
+    drag(document.querySelector('.call-block'));
+}
+
 function endCall(){
     const otherUserOnCall=document.getElementById('otherUserOnCall').value;
     document.querySelector('.call-block').remove();
@@ -447,12 +466,18 @@ function endCall(){
 async function acceptCallCB(data){
      const {info,event} = data;
      document.querySelector('#incoming-call').remove();
-     displayVideoDiv(info.from);
-     localStream = await navigator.mediaDevices.getUserMedia({audio:true,video:true});
-     localVideo=document.querySelector('#localVideo');
-     localVideo.srcObject=localStream;
-    socket.emit('accept-call',{to:info.from});
-    drag( localVideo );
+     if(!isAudioCall){
+         displayVideoDiv(info.from);
+         localStream = await navigator.mediaDevices.getUserMedia({audio:true,video:true});
+         localVideo=document.querySelector('#localVideo');
+         localVideo.srcObject=localStream;
+         drag( localVideo );
+     }else{
+        localStream = await navigator.mediaDevices.getUserMedia({audio:true});
+        displayAudioDiv({from:info.from,name:info.name});
+     }
+
+     socket.emit('accept-call',{to:info.from});
 }
 
 function rejectCallCB(data){
@@ -471,7 +496,7 @@ function createPeerConnection(to) {
     }
     peer.ontrack = (ev) => {
         remoteVideo = document.querySelector('#remoteVideo');
-      
+        remoteAudio = document.querySelector('#remoteAudio');
         if (remoteVideo) {
             remoteVideo.srcObject = ev.streams[0];
             remoteVideo.onloadedmetadata = () => {
@@ -479,7 +504,10 @@ function createPeerConnection(to) {
                   console.error("play() failed:", err);
                 });
               };                        
-        } else {
+        }else if(remoteAudio){
+            remoteAudio.srcObject = ev.streams[0];
+        }
+         else {
             console.log("no remoteVideo player");
         }
 
@@ -522,23 +550,34 @@ socket.on('incoming-call', async (data) => {
 })
 
 socket.on('call-accepted', async (data) => {
-    const {from } = data
+    const {from ,name} = data
     callStatus=document.getElementById('call-status')
     callStatus.remove();
     createPeerConnection(from);
 
-    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    if(!isAudioCall){
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    }else{
+        localStream = await navigator.mediaDevices.getUserMedia({audio:true})
+    }
+
     localStream.getTracks().forEach(track => {
         peer.addTrack(track, localStream);
     })
 
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
+
+    if(!isAudioCall){  
     displayVideoDiv(from);
     localVideo = document.querySelector('#localVideo');
     localVideo.srcObject=localStream;
     socket.emit('offer',{to:from,offer});
     drag(localVideo);
+    }else{
+        displayAudioDiv({from,name});
+        socket.emit('offer',{to:from,offer,isAudioCall})
+    }
 })
 
 socket.on('offer',async data=>{

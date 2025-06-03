@@ -544,3 +544,32 @@ z-index: 102;
     width: 40px;
     height: 40px;
 }
+.audio-call-block{
+    min-width: max-content;
+    width: 20vh;
+    height: 15vh;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    top: 10vh;
+    padding: 10px;
+    z-index: 101;
+    background: rgb(62,59,59);
+    border-radius: 10px;
+    border: 1px solid rgb(175, 175, 175);
+}
+ 
+.audio-call-block button{
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 5%;
+}
+.audio-call-block button img{
+    width: 40px;
+    height: 40px;
+}

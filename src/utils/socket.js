@@ -134,12 +134,12 @@ export const intialiseSocket = (server) => {
       }
     })
 
-    socket.on('call-user', to => {
+    socket.on('call-user', (data) => {
+      const {to , isAudioCall} = data;
       const otherUserSocketId = onlineUsers.get(to);
       if (otherUserSocketId) {
-        socket.to(otherUserSocketId).emit('incoming-call',{from:socket.userId , name:socket.name});
+        socket.to(otherUserSocketId).emit('incoming-call',{from:socket.userId , name:socket.name ,isAudioCall});
       }else if(!otherUserSocketId){
-        console.log("user is offline");
         socket.emit('callee-offline');
       }
     
@@ -148,7 +148,7 @@ export const intialiseSocket = (server) => {
     socket.on('accept-call', data => {
       const { to } = data;
       const otherUserSocketId = onlineUsers.get(to);
-      socket.to(otherUserSocketId).emit('call-accepted' ,{from:socket.userId });
+      socket.to(otherUserSocketId).emit('call-accepted' ,{from:socket.userId ,name:socket.name});
     })
     socket.on('reject-call', data => {
       const { to } = data;
