@@ -148,7 +148,7 @@
       const chatArea = document.getElementById("chat-area");
       chatArea.scrollTop = chatArea.scrollHeight;
       const to_userId = document.getElementById('f-id').value.trim();
-    const socket = io("http://localhost:3000",{
+    const socket = io({
                   auth:{
                       toUserId:to_userId,
                   }

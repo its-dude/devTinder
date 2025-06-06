@@ -184,7 +184,7 @@
         }
 
         async function createNewChatBtnCB() {
-            connections = await fetch("http://localhost:3000/connections", {
+            connections = await fetch("/connections", {
                 method: 'GET',
                 headers: {
                     'X-From-Fetch': 'true'
