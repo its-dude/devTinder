@@ -524,23 +524,23 @@ function createPeerConnection(to) {
 
     }
 
-    // let makingOffer = false;
+    let makingOffer = false;
 
-    // peer.onnegotiationneeded = async () => {
-    //   try {
-    //     if (makingOffer) return;
-    //     makingOffer = true;
+    peer.onnegotiationneeded = async () => {
+      try {
+        if (makingOffer) return;
+        makingOffer = true;
     
-    //     const offer = await peer.createOffer();
-    //     await peer.setLocalDescription(offer);
-    
-    //     socket.emit("call-user", { offer, to });
-    //   } catch (err) {
-    //     console.error("onnegotiationneeded error:", err);
-    //   } finally {
-    //     makingOffer = false;
-    //   }
-    // };
+        const offer = await peer.createOffer();
+        await peer.setLocalDescription(offer);
+        console.log("negotiation needed");
+        socket.emit("offer", { offer, to });
+      } catch (err) {
+        console.error("onnegotiationneeded error:", err);
+      } finally {
+        makingOffer = false;
+      }
+    };
     
 }
 

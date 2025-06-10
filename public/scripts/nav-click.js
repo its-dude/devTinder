@@ -6,7 +6,7 @@ function main() {
             const profile = document.getElementById('profile');
 
             if (e.target.contains(profile)) { 
-                routes.style.display = routes.style.display === 'none' ? 'flex' : 'none';
+                routes.style.display = routes.style.display === 'flex'? 'none':'flex';
             }
 
             if (!routes.contains(e.target) && e.target !== profile) {
