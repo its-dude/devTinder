@@ -52,16 +52,17 @@
   
     .user-block {
      display: none;
-      z-index: 2;
+      z-index: 105;
       flex-direction: column;
       width: 10vw;
-      height: 13vh;
+      height: max-content;
       position: absolute;
       top: 7vh;
       right: 3vw;
       background: rgb(37, 36, 51);
       padding: 1vw;
       border-radius: 8px;
+      color:white;
     }
   
     .user-block form a {
@@ -69,7 +70,7 @@
       color: inherit;
     }
   </style>
-  
+  <script src="/scripts/nav-click.js"></script>
   <div class="navbar">
     <%if(!user.chat){ %>
     <form action="/feed">
@@ -103,16 +104,16 @@
   
     <div class="user-block">
       <form action="/requests">
-        <a onclick="postData(event)" href="/requests">requests</a>
+        <a  href="/requests">requests</a>
       </form>
       <form action="/connections">
-        <a onclick="postData(event)" href="/connections">connections</a>
+        <a  href="/connections">connections</a>
       </form>
       <form action="/profile" method="POST">
-        <a onclick="postData(event)" href="/profile">profile</a>
+        <a  href="/profile">profile</a>
       </form>
       <form action="/premimum" method="POST">
-        <a onclick="postData(event)" href="/premimum">premimum</a>
+        <a  href="/premimum">premimum</a>
       </form>
       <form id="postForm" action="/logout" method="POST">
         <input type="hidden" name="key" value="value">

@@ -450,7 +450,8 @@ input[type="checkbox"] {
     left: 50%;
     transform: translateX(-50%);
     color:white;
-    width: 15vw ;
+    min-width: 15vw ;
+    width: max-content;
     height: 10vh;
     z-index: 105;
     background: rgb(102, 106, 109);

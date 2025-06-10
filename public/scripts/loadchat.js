@@ -93,6 +93,9 @@ socket.on('messageReceived', ({ fromUserId, groupChatId, name, message }) => {
 // Event Delegation for send button click & Enter key
 document.body.addEventListener('click', (event) => {
     event.stopPropagation();
+    const routes = document.querySelector('.user-block');
+    const profile = document.getElementById('profile');
+
     if (event.target.matches('#send-btn')) {
         msgSendCB();
     }
@@ -146,6 +149,14 @@ document.body.addEventListener('click', (event) => {
 
     if (event.target.closest('.audio-call')) {
          makeCall({status:"calling",audioCall:true});
+    }
+
+    if (event.target.contains(profile)) { 
+        routes.style.display = routes.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    if (!routes.contains(event.target) && event.target !== profile) {
+        routes.style.opacity = '0';
     }
 
 });
