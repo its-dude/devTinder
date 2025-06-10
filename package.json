@@ -4,7 +4,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "start": "node ./src/app.js"
   },
   "author": "abhishek mishra",
   "license": "ISC",
